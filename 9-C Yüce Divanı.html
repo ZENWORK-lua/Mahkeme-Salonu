@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>9-C YÜCE DİVANI</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;800;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        supreme: {
+                            black: '#030303',
+                            dark: '#0a0a0c',
+                            panel: 'rgba(15, 15, 18, 0.75)',
+                            gold: '#d4af37',
+                            goldlight: '#fde08b',
+                            golddark: '#8a6e1c',
+                            red: '#990000',
+                            crimson: '#4a0000'
+                        }
+                    },
+                    fontFamily: {
+                        serif: ['Cinzel', 'serif'],
+                        sans: ['Inter', 'sans-serif']
+                    },
+                    boxShadow: {
+                        'gold-glow': '0 0 30px -5px rgba(212, 175, 55, 0.3)',
+                        'red-glow': '0 0 40px -5px rgba(153, 0, 0, 0.6)',
+                        'glass': '0 8px 32px 0 rgba(0, 0, 0, 0.8)'
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Global & Reset */
+        body {
+            background-color: #030303;
+            background-image: 
+                radial-gradient(circle at 50% 0%, #1a1508 0%, transparent 50%),
+                radial-gradient(circle at 50% 100%, #150000 0%, transparent 50%);
+            background-attachment: fixed;
+            color: #e5e7eb;
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+        }
+
+        /* Prevent Text Overflow & Wrapping Fixes */
+        * {
+            word-wrap: break-word !important;
+            overflow-wrap: break-word !important;
+        }
+        
+        select, option {
+            white-space: normal !important;
+            text-overflow: ellipsis;
+        }
+
+        /* Glassmorphism Classes */
+        .glass-card {
+            background: var(--tw-colors-supreme-panel);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(212, 175, 55, 0.15);
+            box-shadow: var(--tw-shadow-glass);
+        }
+
+        /* Gold Text Gradient */
+        .text-gold-gradient {
+            background: linear-gradient(to right, #d4af37, #fde08b, #d4af37);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* Custom Input & Select Styling */
+        .supreme-input {
+            background: rgba(0, 0, 0, 0.6);
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            color: #fde08b;
+            transition: all 0.3s ease;
+        }
+        .supreme-input:focus {
+            outline: none;
+            border-color: #d4af37;
+            box-shadow: 0 0 15px rgba(212, 175, 55, 0.2);
+            background: rgba(0, 0, 0, 0.8);
+        }
+
+        /* Animations */
+        .fade-in-up {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+        }
+        .fade-in-up.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .spin-slow {
+            animation: spin 4s linear infinite;
+        }
+
+        @keyframes pulse-red {
+            0%, 100% { box-shadow: 0 0 20px rgba(153, 0, 0, 0.4); border-color: rgba(153, 0, 0, 0.5); }
+            50% { box-shadow: 0 0 50px rgba(153, 0, 0, 0.8); border-color: rgba(255, 0, 0, 0.8); }
+        }
+        .verdict-box {
+            animation: pulse-red 3s infinite;
+            background: linear-gradient(135deg, rgba(74, 0, 0, 0.9) 0%, rgba(10, 0, 0, 0.95) 100%);
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #030303; }
+        ::-webkit-scrollbar-thumb { background: #8a6e1c; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #d4af37; }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col items-center py-10 px-4 sm:px-6 lg:px-8 font-sans">
+
+    <!-- Custom Message Box (Replaces alert) -->
+    <div id="message-box" class="fixed inset-0 z-50 hidden flex items-center justify-center bg-black/80 backdrop-blur-sm opacity-0 transition-opacity duration-300">
+        <div class="glass-card border-supreme-red/50 rounded-xl p-6 md:p-8 max-w-sm w-full mx-4 transform scale-95 transition-transform duration-300 shadow-red-glow">
+            <div class="flex items-center gap-4 mb-4 border-b border-supreme-red/30 pb-4">
+                <i class="fa-solid fa-triangle-exclamation text-supreme-red text-3xl"></i>
+                <h3 class="text-xl font-serif font-bold text-white tracking-widest">YÜCE DİVAN UYARISI</h3>
+            </div>
+            <p id="message-text" class="text-gray-300 text-sm md:text-base mb-6 leading-relaxed"></p>
+            <button onclick="closeMessage()" class="w-full bg-supreme-red hover:bg-red-800 text-white font-serif font-bold py-3 rounded-lg transition-colors border border-red-500/50 shadow-lg tracking-widest">
+                ANLAŞILDI
+            </button>
+        </div>
+    </div>
+
+    <!-- Header Section -->
+    <header class="text-center w-full max-w-4xl mb-12">
+        <div class="inline-flex items-center justify-center w-28 h-28 rounded-full glass-card shadow-gold-glow mb-6 border border-supreme-gold/40">
+            <i class="fa-solid fa-scale-balanced text-6xl text-supreme-gold spin-slow"></i>
+        </div>
+        <h1 class="text-4xl md:text-5xl lg:text-7xl font-serif font-black tracking-widest text-white mb-4">
+            9-C <span class="text-gold-gradient">YÜCE DİVANI</span>
+        </h1>
+        <div class="h-[2px] w-48 bg-gradient-to-r from-transparent via-supreme-gold to-transparent mx-auto mb-4"></div>
+        <p class="text-gray-400 font-serif text-sm md:text-base tracking-[0.3em] uppercase">Adaletin Kılıcı Keskindir</p>
+    </header>
+
+    <!-- Main Container -->
+    <main class="w-full max-w-3xl relative">
+        <form id="court-form" onsubmit="startTrial(event)">
+            
+            <!-- STEP 1: Davacı -->
+            <div id="step-1" class="glass-card rounded-2xl p-6 md:p-8 mb-8 transition-all duration-500 border-l-4 border-l-supreme-gold">
+                <div class="flex items-center gap-4 mb-6">
+                    <div class="w-10 h-10 rounded-full bg-supreme-gold/20 flex items-center justify-center border border-supreme-gold/50">
+                        <span class="text-supreme-gold font-serif font-bold text-xl">1</span>
+                    </div>
+                    <div>
+                        <h2 class="text-xl md:text-2xl font-serif font-bold text-white tracking-wide">Adım 1: Siz Kimsiniz?</h2>
+                        <p class="text-supreme-gold/70 text-xs md:text-sm font-serif uppercase tracking-wider mt-1">(Davacı Makamı)</p>
+                    </div>
+                </div>
+                
+                <p class="text-gray-400 text-sm mb-4 font-light leading-relaxed">Yüce divan huzuruna çıkan kimliğini beyan etsin. Davayı açan asıl kişi kimdir?</p>
+                <div class="relative">
+                    <select id="plaintiff" onchange="handleStep1()" class="w-full supreme-input rounded-xl px-4 py-4 appearance-none cursor-pointer text-base md:text-lg font-medium">
+                        <option value="" disabled selected>Kimliğinizi seçiniz...</option>
+                        <!-- Populated via JS -->
+                    </select>
+                    <i class="fa-solid fa-chevron-down absolute right-5 top-[18px] text-supreme-gold pointer-events-none"></i>
+                </div>
+            </div>
+
+            <!-- STEP 2: Sanık (Hidden initially) -->
+            <div id="step-2" class="fade-in-up hidden glass-card rounded-2xl p-6 md:p-8 mb-8 border-l-4 border-l-supreme-red">
+                <div class="flex items-center gap-4 mb-6">
+                    <div class="w-10 h-10 rounded-full bg-supreme-red/20 flex items-center justify-center border border-supreme-red/50">
+                        <span class="text-supreme-red font-serif font-bold text-xl">2</span>
+                    </div>
+                    <div>
+                        <h2 class="text-xl md:text-2xl font-serif font-bold text-white tracking-wide">Adım 2: Kimi Dava Ediyorsunuz?</h2>
+                        <p class="text-supreme-red/70 text-xs md:text-sm font-serif uppercase tracking-wider mt-1">(Sanık Kürsüsü)</p>
+                    </div>
+                </div>
+                
+                <p class="text-gray-400 text-sm mb-4 font-light leading-relaxed">Hakkında suç duyurusunda bulunacağınız şüpheliyi işaret ediniz.</p>
+                <div class="relative">
+                    <select id="defendant" onchange="handleStep2()" class="w-full supreme-input rounded-xl px-4 py-4 appearance-none cursor-pointer text-base md:text-lg font-medium">
+                        <option value="" disabled selected>Sanığı seçiniz...</option>
+                        <!-- Populated via JS -->
+                    </select>
+                    <i class="fa-solid fa-chevron-down absolute right-5 top-[18px] text-supreme-red pointer-events-none"></i>
+                </div>
+            </div>
+
+            <!-- STEP 3: İddianame & Delil (Hidden initially) -->
+            <div id="step-3" class="fade-in-up hidden glass-card rounded-2xl p-6 md:p-8 mb-8 border-t-2 border-supreme-gold">
+                <div class="flex items-center gap-4 mb-6">
+                    <div class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center border border-white/30">
+                        <span class="text-white font-serif font-bold text-xl">3</span>
+                    </div>
+                    <div>
+                        <h2 class="text-xl md:text-2xl font-serif font-bold text-white tracking-wide">Adım 3: İddianame</h2>
+                        <p class="text-gray-400 text-xs md:text-sm font-serif uppercase tracking-wider mt-1">(Olay Nedir?)</p>
+                    </div>
+                </div>
+                
+                <textarea id="complaint" rows="5" required placeholder="İşlenen suçu, olayın nasıl geliştiğini tüm detaylarıyla Divan'a arz ediniz..." 
+                    class="w-full supreme-input rounded-xl px-5 py-4 resize-none text-sm md:text-base mb-6 font-sans shadow-inner"></textarea>
+                
+                <!-- File Upload -->
+                <div class="mb-8">
+                    <div class="relative flex items-center justify-center w-full">
+                        <label for="evidence" class="flex flex-col items-center justify-center w-full h-36 border-2 border-dashed border-supreme-gold/40 rounded-xl cursor-pointer bg-black/40 hover:bg-black/60 transition-all group overflow-hidden relative">
+                            <div class="flex flex-col items-center justify-center pt-5 pb-6 text-center px-4">
+                                <i class="fa-solid fa-file-shield text-4xl text-supreme-gold/50 group-hover:text-supreme-gold transition-colors mb-3"></i>
+                                <p class="mb-2 text-sm text-gray-300 font-medium"><span class="font-bold text-supreme-gold">📁 Dosya Ekle</span> veya sürükle</p>
+                                <p class="text-xs text-supreme-gold/60 font-serif tracking-widest">Maks: Resim 40MB | Video 400MB</p>
+                            </div>
+                            <input id="evidence" type="file" class="hidden" accept="image/*,video/*" onchange="checkEvidence()" />
+                        </label>
+                    </div>
+                    <!-- Selected File Info -->
+                    <div id="file-info" class="hidden mt-3 bg-supreme-gold/10 border border-supreme-gold/20 rounded-lg p-3 flex items-center justify-between">
+                        <div class="flex items-center gap-3 overflow-hidden">
+                            <i class="fa-solid fa-paperclip text-supreme-gold"></i>
+                            <span id="file-name" class="text-sm text-gray-200 truncate whitespace-nowrap"></span>
+                        </div>
+                        <button type="button" onclick="clearEvidence()" class="text-supreme-red hover:text-red-400 ml-2 p-1">
+                            <i class="fa-solid fa-trash"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Submit Button -->
+                <button type="submit" id="submit-btn" class="w-full relative group overflow-hidden bg-gradient-to-r from-[#b38f22] via-[#fde08b] to-[#b38f22] text-black font-serif font-black tracking-[0.2em] text-lg md:text-xl py-5 rounded-xl shadow-gold-glow transition-all transform hover:scale-[1.02]">
+                    <span class="relative z-10 flex items-center justify-center gap-3">
+                        <i class="fa-solid fa-gavel text-2xl"></i>
+                        DURUŞMAYI BAŞLAT
+                    </span>
+                </button>
+            </div>
+        </form>
+
+        <!-- Loader Section -->
+        <div id="loader-section" class="hidden flex flex-col items-center justify-center py-16 text-center">
+            <i class="fa-solid fa-gavel text-7xl text-supreme-gold mb-6 animate-[bounce_1s_infinite]"></i>
+            <h2 class="text-2xl md:text-3xl font-serif font-bold text-white tracking-widest uppercase animate-pulse">
+                Yüce Divan Kararı Bekleniyor...
+            </h2>
+            <p class="text-supreme-gold/70 font-serif mt-4 tracking-widest text-sm">Adalet tecelli ediyor</p>
+        </div>
+
+        <!-- Verdict Section -->
+        <div id="verdict-section" class="hidden opacity-0 mt-8 mb-16">
+            <div class="verdict-box border-2 rounded-2xl p-6 md:p-10 relative overflow-hidden">
+                <!-- Watermark -->
+                <i class="fa-solid fa-scale-unbalanced absolute -right-10 -bottom-10 text-9xl text-supreme-red/10 rotate-[-15deg] pointer-events-none"></i>
+                
+                <div class="text-center border-b border-supreme-red/30 pb-6 mb-8 relative z-10">
+                    <h2 class="text-3xl md:text-4xl font-serif font-black text-white tracking-widest uppercase">HÜKÜM AÇIKLANDI</h2>
+                    <p class="text-supreme-red font-serif tracking-[0.3em] text-sm mt-2 font-bold">KARAR NO: <span id="karar-no"></span></p>
+                </div>
+                
+                <div class="space-y-6 text-base md:text-lg font-serif relative z-10">
+                    <div class="bg-black/40 p-4 rounded-lg border border-white/10">
+                        <p class="text-gray-400 text-xs uppercase tracking-widest mb-1">Davacı</p>
+                        <p class="text-supreme-gold font-bold" id="v-plaintiff"></p>
+                    </div>
+                    <div class="bg-black/40 p-4 rounded-lg border border-white/10">
+                        <p class="text-gray-400 text-xs uppercase tracking-widest mb-1">Sanık</p>
+                        <p class="text-supreme-red font-bold" id="v-defendant"></p>
+                    </div>
+                    <div class="bg-black/40 p-4 rounded-lg border border-white/10">
+                        <p class="text-gray-400 text-xs uppercase tracking-widest mb-1">Yüce Divan Kararı</p>
+                        <p class="text-white leading-relaxed mt-2" id="v-verdict"></p>
+                    </div>
+                </div>
+
+                <div class="mt-10 text-center relative z-10">
+                    <button onclick="resetDivan()" class="bg-transparent border border-supreme-gold text-supreme-gold hover:bg-supreme-gold hover:text-black font-serif font-bold py-3 px-8 rounded-lg transition-all tracking-widest text-sm">
+                        YENİ DOSYA AÇ
+                    </button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="mt-auto pt-10 pb-6 text-center text-gray-600 text-xs font-serif tracking-[0.2em]">
+        YARGITAY BAŞKANLIĞI © 2026 • 9-C ÖZEL YETKİLİ MAHKEMESİ
+    </footer>
+
+    <!-- JavaScript Logic -->
+    <script>
+        // Exact Student Array Provided
+        const students = [
+            'AHMET ÖZCAN ATALI', 'ALYA AKIN', 'ALİ POYRAZ COŞKUNSU', 'ANIL DİRİM', 
+            'ASYA ECE ÖZKARAGÖZ', 'BAHAR NUR ÖZTÜRK', 'BERAT AYRAN', 'BEREN AHU ASLAN', 
+            'BERİL AKOĞLU', 'ELİF DENİZ EKİM', 'ELİF NEHİR İŞLER', 'ELİF ZİŞAN ÖZAĞI', 
+            'EREM ÇAĞIL ÖZÇELİK', 'ESLEM SARE AKSOY', 'ESMA BETÜL KOLACA', 'EYLÜL KAYA', 
+            'EYLÜL SU AKSU', 'HAYRİNİSANUR ÖZDEMİR', 'MELİKE BİRİNCİ', 'MİRAÇ DÜZENLİ', 
+            'NEVRA RÂNÂ EMEN', 'SEVGİ NUR KANIDOK', 'SÜMEYRA NUR METİN', 'TUĞRA MURATHAN YILDIRIM', 
+            'YASER ATEŞ', 'YİĞİT EREN ŞENGÖZ', 'ZEYNEP ÖZÜDURU', 'ÖMER FARUK AKBAŞ', 
+            'İSMAİL TALHA KAHRAMAN'
+        ];
+
+        const WEBHOOK_URL = "https://discord.com/api/webhooks/1569446499484573707/nB5wGhtc9Km4Dx6aiJ6NXBab0CynO5sz63ELtOyKc5s4iJ9aKAuiuvuR-cA5Q7k15CSr";
+        let fileData = { name: null, size: null };
+
+        // Initialize App
+        document.addEventListener("DOMContentLoaded", () => {
+            const plaintiffSelect = document.getElementById("plaintiff");
+            students.forEach(name => {
+                let opt = document.createElement("option");
+                opt.value = name;
+                opt.textContent = name;
+                plaintiffSelect.appendChild(opt);
+            });
+        });
+
+        // Custom Message Box Logic
+        function showMessage(msg) {
+            const box = document.getElementById("message-box");
+            const text = document.getElementById("message-text");
+            text.innerText = msg;
+            box.classList.remove("hidden");
+            // small delay for transition
+            setTimeout(() => box.classList.remove("opacity-0"), 50);
+        }
+
+        function closeMessage() {
+            const box = document.getElementById("message-box");
+            box.classList.add("opacity-0");
+            setTimeout(() => box.classList.add("hidden"), 300);
+        }
+
+        // Smooth Scrolling Utility
+        function scrollToEl(id) {
+            setTimeout(() => {
+                const el = document.getElementById(id);
+                const y = el.getBoundingClientRect().top + window.scrollY - 20; // 20px offset
+                window.scrollTo({ top: y, behavior: 'smooth' });
+            }, 100);
+        }
+
+        // Step 1 -> Step 2
+        function handleStep1() {
+            const p = document.getElementById("plaintiff").value;
+            const defSelect = document.getElementById("defendant");
+            const step2 = document.getElementById("step-2");
+            
+            if(!p) return;
+
+            // Populate Step 2
+            defSelect.innerHTML = '<option value="" disabled selected>Sanığı seçiniz...</option>';
+            students.forEach(name => {
+                if (name !== p) {
+                    let opt = document.createElement("option");
+                    opt.value = name;
+                    opt.textContent = name;
+                    defSelect.appendChild(opt);
+                }
+            });
+
+            // Show Step 2 & Scroll
+            step2.classList.remove("hidden");
+            setTimeout(() => step2.classList.add("visible"), 50);
+            scrollToEl("step-2");
+        }
+
+        // Step 2 -> Step 3
+        function handleStep2() {
+            const step3 = document.getElementById("step-3");
+            if(!document.getElementById("defendant").value) return;
+
+            // Show Step 3 & Scroll
+            step3.classList.remove("hidden");
+            setTimeout(() => step3.classList.add("visible"), 50);
+            scrollToEl("step-3");
+            
+            // Focus textarea for better UX after a short delay
+            setTimeout(() => document.getElementById("complaint").focus(), 600);
+        }
+
+        // Evidence Checking Logic
+        function checkEvidence() {
+            const fileInput = document.getElementById("evidence");
+            const file = fileInput.files[0];
+            const infoBox = document.getElementById("file-info");
+            const nameSpan = document.getElementById("file-name");
+
+            if (!file) {
+                clearEvidence();
+                return;
+            }
+
+            const sizeMB = file.size / (1024 * 1024);
+            const isImg = file.type.startsWith("image/");
+            const isVid = file.type.startsWith("video/");
+
+            if (isImg && sizeMB > 40) {
+                showMessage(`Resim boyutu 40MB sınırını aşıyor!\nYüklenen: ${sizeMB.toFixed(1)}MB`);
+                clearEvidence();
+                return;
+            }
+            if (isVid && sizeMB > 400) {
+                showMessage(`Video boyutu 400MB sınırını aşıyor!\nYüklenen: ${sizeMB.toFixed(1)}MB`);
+                clearEvidence();
+                return;
+            }
+            if (!isImg && !isVid) {
+                showMessage("Yüce Divan'a yalnızca RESİM veya VİDEO formatında delil sunabilirsiniz.");
+                clearEvidence();
+                return;
+            }
+
+            // Valid File
+            fileData.name = file.name;
+            fileData.size = `${sizeMB.toFixed(2)} MB`;
+            nameSpan.innerText = `${file.name} (${fileData.size})`;
+            infoBox.classList.remove("hidden");
+        }
+
+        function clearEvidence() {
+            document.getElementById("evidence").value = "";
+            fileData = { name: null, size: null };
+            document.getElementById("file-info").classList.add("hidden");
+        }
+
+        // Start Trial / Form Submit
+        function startTrial(e) {
+            e.preventDefault();
+            
+            const p = document.getElementById("plaintiff").value;
+            const d = document.getElementById("defendant").value;
+            const c = document.getElementById("complaint").value;
+
+            if (!p || !d || !c) {
+                showMessage("Divan huzuruna eksik beyanla çıkılamaz. Tüm alanları doldurun.");
+                return;
+            }
+
+            // Hide form, show loader
+            document.getElementById("court-form").style.display = "none";
+            const loader = document.getElementById("loader-section");
+            loader.classList.remove("hidden");
+            loader.classList.add("flex");
+            scrollToEl("loader-section");
+
+            // Wait 2.5 seconds, then generate verdict
+            setTimeout(() => {
+                const verdict = generateAIVerdict(c);
+                displayVerdict(p, d, c, verdict);
+            }, 2500);
+        }
+
+        // Verdict Generation logic based on keywords
+        function generateAIVerdict(text) {
+            const t = text.toLowerCase();
+            let karar = "";
+
+            if (t.match(/kantin|para|tost|borç|lira|tl|çal/)) {
+                karar = "Sanığın sınıf ekonomisine kasıtlı saldırısı ve nitelikli dolandırıcılık teşebbüsü tespit edilmiştir. <b>KANTİN SÜRGÜNÜNE</b> ve sınıfın tüm tost masraflarını ödemesine, ek olarak mal varlığına el konulmasına KARAR VERİLMİŞTİR!";
+            } else if (t.match(/kopya|sınav|not|hoca|kâğıt|cevap/)) {
+                karar = "Eğitim onurunu zedeleyen akademik sahtekarlık suçu sabit görülmüştür. Sanığın <b>MEYDANDA SIFIRCI İNFAZINA</b>, tüm notlarının 0 girilmesine ve okul kapısına ibretialem için asılmasına KARAR VERİLMİŞTİR!";
+            } else if (t.match(/kavga|dövdü|vurdu|tokat|küfür|şiddet|darp/)) {
+                karar = "Sınıfın huzur ve sükunetini bozmak, kasten adam yaralamak ve Yüce Divan nizamına karşı gelmek suçlarından sanığın <b>FALAKA VE ZİNDAN</b> cezasına çarptırılmasına, ayrıca 1 hafta boyunca herkesin çantasını taşımasına KARAR VERİLMİŞTİR!";
+            } else if (t.match(/şaka|iftira|yalan|boş/)) {
+                karar = "Ortada somut bir delil bulunmadığı ve davanın Yüce Divan'ı oyalamak maksadıyla açıldığı tespit edilmiştir. Davacının (Sizin) <b>GİYOTİNLE İNFAZINA</b>, sanığın ise BERAATİNE KARAR VERİLMİŞTİR!";
+            } else {
+                const punishments = [
+                    "SİBİRYA SÜRGÜNÜ VE İDAM",
+                    "GİYOTİNLE İNFAZ",
+                    "OKULDAN SÜRESİZ MEN VE SÜRGÜN",
+                    "MÜEBBET NÖBETÇİ ÖĞRENCİ HAPSİ",
+                    "TEK AYAK ÜSTÜNDE MÜEBBET"
+                ];
+                const p = punishments[Math.floor(Math.random() * punishments.length)];
+                karar = `Sanığın üzerine atılı suçu işlediği, sunulan kanıtlar ve heyet kanaatince kesinleşmiştir. Yüce Divan takdiri ile sanığın <b>${p}</b> cezasına çarptırılmasına KESİN OLARAK KARAR VERİLMİŞTİR!`;
+            }
+
+            return karar;
+        }
+
+        // Display Verdict & Send Webhook
+        function displayVerdict(plaintiff, defendant, complaint, verdictStr) {
+            // Hide Loader
+            const loader = document.getElementById("loader-section");
+            loader.classList.remove("flex");
+            loader.classList.add("hidden");
+
+            // Setup Verdict Box
+            const vSec = document.getElementById("verdict-section");
+            vSec.classList.remove("hidden");
+            
+            document.getElementById("karar-no").innerText = new Date().getFullYear() + "/" + Math.floor(1000 + Math.random() * 9000);
+            document.getElementById("v-plaintiff").innerText = plaintiff;
+            document.getElementById("v-defendant").innerText = defendant;
+            document.getElementById("v-verdict").innerHTML = verdictStr;
+
+            // Fade in and scroll
+            setTimeout(() => {
+                vSec.classList.remove("opacity-0");
+                vSec.style.transition = "opacity 1s ease-in";
+                scrollToEl("verdict-section");
+            }, 50);
+
+            // Trigger Discord Webhook
+            sendDiscordWebhook(plaintiff, defendant, complaint, verdictStr);
+        }
+
+        function sendDiscordWebhook(p, d, c, v) {
+            let delilStr = fileData.name ? `📁 ${fileData.name} (${fileData.size})` : "❌ Delil sunulmadı.";
+            // Strip HTML from verdict for discord
+            let cleanVerdict = v.replace(/<b>/g, "**").replace(/<\/b>/g, "**");
+
+            const payload = {
+                embeds: [{
+                    title: "⚖️ YÜCE DİVAN KARARI AÇIKLANDI",
+                    color: 10027008, // Supreme Red
+                    fields: [
+                        { name: "Davacı", value: `**${p}**`, inline: true },
+                        { name: "Sanık", value: `**${d}**`, inline: true },
+                        { name: "İddianame", value: c, inline: false },
+                        { name: "Sunulan Delil", value: delilStr, inline: false },
+                        { name: "Yüce Divan Hükmü", value: cleanVerdict, inline: false }
+                    ],
+                    footer: {
+                        text: "9-C Yargıtay Başkanlığı Resmi Kaydıdır."
+                    },
+                    timestamp: new Date().toISOString()
+                }]
+            };
+
+            // Standard POST without no-cors so we actually just send it properly
+            fetch(WEBHOOK_URL, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(payload)
+            }).catch(e => console.log("Webhook delivery error:", e));
+        }
+
+        // Reset App
+        function resetDivan() {
+            document.getElementById("court-form").reset();
+            document.getElementById("court-form").style.display = "block";
+            
+            // Hide steps 2 and 3
+            document.getElementById("step-2").classList.add("hidden");
+            document.getElementById("step-2").classList.remove("visible");
+            document.getElementById("step-3").classList.add("hidden");
+            document.getElementById("step-3").classList.remove("visible");
+            
+            // Hide verdict
+            document.getElementById("verdict-section").classList.add("hidden");
+            document.getElementById("verdict-section").classList.add("opacity-0");
+            
+            clearEvidence();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    </script>
+</body>
+</html>
