@@ -1,4 +1,3 @@
-```html
 <!DOCTYPE html>
 <html lang="tr">
 <head>
@@ -366,4 +365,67 @@
                     : `Ufak itiş kakışlar 9-C'nin doğasında var. Kasıtlı bir darp kanıtlanamadı. Beraat! Birbirinize sarılın barışın.`;
             } else if (text.match(/kopya|ödev|hoca|sınav|ders|not/)) {
                 savci = "Akademik hırsızlık veya yardımlaşma eksikliği seziyorum. Eğitim hayatımıza balta vurulmaya çalışılmış aga.";
-                h
+                hakim = isGuilty
+                    ? `Ders konusunda yapılan bu hainliği affetmiyorum! ${defendant}, bir sonraki sınav veya ödevde tüm cevaplarını ${plaintiff} ile paylaşmaya mahkum edilmiştir!`
+                    : `Hocanın gözüne girmek veya kendi hakkını savunmak suç değildir. Beraat! Çalışan kazanır aga.`;
+            } else if (text.match(/konuştu|dedikodu|laf|arkamdan|whatsapp/)) {
+                savci = "Sınıfın gıybet kazanı yine kaynamış. Sosyal ilişkiler zedelenmiş sayın yargıcım.";
+                hakim = isGuilty
+                    ? `Dedikodu affedilmez! ${defendant}, sınıfın ortasına geçip ${plaintiff}'tan özür dileyecek ve hakkında 3 tane güzel söz söyleyecektir.`
+                    : `Söz uçar yazı kalır, ortada kesin delil yok. Beraat! Boş muhabbetleri kafaya takmayın.`;
+            } else {
+                savci = "Ortada fena bir kolpalık var aga. Sanığın hareketleri çok şüpheli, bence cezayı hakediyor.";
+                hakim = isGuilty
+                    ? `Gereği düşünüldü: Sanık ${defendant} suçludur! Cezasını çekmek üzere yarın nöbetçi öğrencinin tüm işlerini tek başına yapacaktır.`
+                    : `Ortada büyütülecek bir mevzu göremedim. Suç unsuru oluşmamıştır. ${defendant} beraat etmiştir, dağılın!`;
+            }
+
+            return { esasNo, isGuilty, katip, savci, hakim };
+        }
+
+        // Webhook Function
+        function sendToDiscord(p, d, c, res) {
+            const payload = {
+                embeds: [{
+                    title: `⚖️ 9-C ADLİYESİ YENİ KARAR (${res.esasNo})`,
+                    color: res.isGuilty ? 15548997 : 5763719, // Pinkish Red vs Greenish
+                    fields: [
+                        { name: "🗣️ Şikayetçi (Aga)", value: p, inline: true },
+                        { name: "😈 Sanık", value: d, inline: true },
+                        { name: "📜 Mevzu Ne?", value: `"${c}"`, inline: false },
+                        { name: "💼 Savcının Yorumu", value: res.savci, inline: false },
+                        { name: "🔨 Hakimin Kararı", value: `**${res.isGuilty ? 'SUÇLU' : 'BERAAT'}**\n${res.hakim}`, inline: false }
+                    ],
+                    footer: { text: "9-C Adalet Sistemi • Otomatik Log Kaydı" },
+                    timestamp: new Date().toISOString()
+                }]
+            };
+
+            fetch(WEBHOOK_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            }).catch(err => {
+                // Silently fail in console if cors blocks it, as requested
+                console.log("Discord log sent or blocked by CORS:", err.message);
+            });
+        }
+
+        // Reset Form
+        function resetForm() {
+            document.getElementById("results-section").classList.add("hidden");
+            document.getElementById("court-form").style.display = "block";
+            
+            document.getElementById("step-2").classList.remove("active");
+            document.getElementById("step-3").classList.remove("active");
+            
+            document.getElementById("court-form").reset();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            
+            // Reset border colors just in case it was green
+            document.querySelector('.border-neon-green')?.classList.replace('border-neon-green', 'border-neon-pink');
+            document.querySelector('.text-neon-green')?.classList.replace('text-neon-green', 'text-neon-pink');
+        }
+    </script>
+</body>
+</html>
