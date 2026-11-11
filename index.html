@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+html_content = """<!DOCTYPE html>
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
@@ -338,7 +338,6 @@
             const text = document.getElementById("message-text");
             text.innerText = msg;
             box.classList.remove("hidden");
-            // small delay for transition
             setTimeout(() => box.classList.remove("opacity-0"), 50);
         }
 
@@ -352,7 +351,7 @@
         function scrollToEl(id) {
             setTimeout(() => {
                 const el = document.getElementById(id);
-                const y = el.getBoundingClientRect().top + window.scrollY - 20; // 20px offset
+                const y = el.getBoundingClientRect().top + window.scrollY - 20;
                 window.scrollTo({ top: y, behavior: 'smooth' });
             }, 100);
         }
@@ -383,7 +382,8 @@
         }
 
         // Step 2 -> Step 3
-        function handleStep2() {
+        function handleStep2()
+            {
             const step3 = document.getElementById("step-3");
             if(!document.getElementById("defendant").value) return;
 
@@ -442,8 +442,9 @@
         }
 
         // Start Trial / Form Submit
-        function startTrial(e) {
+        async function startTrial(e) {
             e.preventDefault();
+            e.stopPropagation(); // Formun sayfayı yenilemesini kesin engeller
             
             const p = document.getElementById("plaintiff").value;
             const d = document.getElementById("defendant").value;
@@ -462,9 +463,9 @@
             scrollToEl("loader-section");
 
             // Wait 2.5 seconds, then generate verdict
-            setTimeout(() => {
+            setTimeout(async () => {
                 const verdict = generateAIVerdict(c);
-                displayVerdict(p, d, c, verdict);
+                await displayVerdict(p, d, c, verdict);
             }, 2500);
         }
 
@@ -497,7 +498,7 @@
         }
 
         // Display Verdict & Send Webhook
-        function displayVerdict(plaintiff, defendant, complaint, verdictStr) {
+        async function displayVerdict(plaintiff, defendant, complaint, verdictStr) {
             // Hide Loader
             const loader = document.getElementById("loader-section");
             loader.classList.remove("flex");
@@ -520,10 +521,10 @@
             }, 50);
 
             // Trigger Discord Webhook
-            sendDiscordWebhook(plaintiff, defendant, complaint, verdictStr);
+            await sendDiscordWebhook(plaintiff, defendant, complaint, verdictStr);
         }
 
-        function sendDiscordWebhook(p, d, c, v) {
+        async function sendDiscordWebhook(p, d, c, v) {
             let delilStr = fileData.name ? `📁 ${fileData.name} (${fileData.size})` : "❌ Delil sunulmadı.";
             // Strip HTML from verdict for discord
             let cleanVerdict = v.replace(/<b>/g, "**").replace(/<\/b>/g, "**");
@@ -546,12 +547,15 @@
                 }]
             };
 
-            // Standard POST without no-cors so we actually just send it properly
-            fetch(WEBHOOK_URL, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(payload)
-            }).catch(e => console.log("Webhook delivery error:", e));
+            try {
+                await fetch(WEBHOOK_URL, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(payload)
+                });
+            } catch (e) {
+                console.error("Webhook hatası:", e);
+            }
         }
 
         // Reset App
@@ -574,4 +578,9 @@
         }
     </script>
 </body>
-</html>
+</html>"""
+
+with open("9C_Yuce_Divani_Webhook_Fix.html", "w", encoding="utf-8") as f:
+    f.write(html_content)
+
+print("FILE_GENERATED: 9C_Yuce_Divani_Webhook_Fix.html")
